@@ -18,5 +18,5 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Printf("%+v\n", v)
+	fmt.Printf("Version data of %s:\n%+v\n", os.Args[1], *v)
 }
