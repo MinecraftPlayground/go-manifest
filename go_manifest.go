@@ -10,12 +10,12 @@ import (
 )
 
 const (
-	BASE_URL     = "https://piston-meta.mojang.com/mc/game"
+	BASE_URL     = "https://piston-meta.mojang.com"
 	RESOURCE_URL = "https://resources.download.minecraft.net"
 )
 
 func GetManifest() (manifest *Manifest, err error) {
-	resp, err := http.Get(BASE_URL + "/version_manifest_v2.json")
+	resp, err := http.Get(BASE_URL + "/mc/game/version_manifest_v2.json")
 	if err != nil {
 		return &Manifest{}, fmt.Errorf("get manifest: %w", err)
 	}
