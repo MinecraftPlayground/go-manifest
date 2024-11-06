@@ -74,10 +74,28 @@ func GetClient(v string) (client *bytes.Buffer, err error) {
 
 }
 
+func GetAssetFile(v, path string) (buf *bytes.Buffer, err error) {
+	version, err := GetVersion(v)
+	if err != nil {
+		return nil, fmt.Errorf("get asset: %w", err)
+	}
+	return version.GetAssetFile(path)
+}
+
+func GetAllAssets(v string) (assetMap map[string]*bytes.Buffer, err error) {
+	version, err := GetVersion(v)
+	if err != nil {
+		return nil, fmt.Errorf("get all assets: %w", err)
+	}
+	return version.GetAllAssets()
+}
+
 type Download struct {
-	Hash     string `json:"sha1"`
-	FileSize int    `json:"size"`
-	URL      string `json:"url"`
+	Hash      string `json:"sha1"`
+	FileSize  int    `json:"size"`
+	URL       string `json:"url"`
+	ID        string `json:"id,omitempty"`
+	TotalSize int    `json:"totalSize,omitempty"`
 }
 
 func (d Download) download() (*bytes.Buffer, error) {
