@@ -51,18 +51,13 @@ func GetVersion(v string) (version *Version, err error) {
 		return &Version{}, fmt.Errorf("get version: %w", err)
 	}
 
-	resp, err := http.Get(manifestVersion.URL)
+	versionData, err := Download{URL: manifestVersion.URL, Hash: manifestVersion.Hash, FileSize: -1}.download()
 	if err != nil {
 		return &Version{}, fmt.Errorf("get version: %w", err)
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return &Version{}, fmt.Errorf("get version: invalid response: expected %d, got %s", http.StatusOK, resp.Status)
-	}
 
 	version = &Version{}
-	err = json.NewDecoder(resp.Body).Decode(version)
+	err = json.NewDecoder(versionData).Decode(version)
 	if err != nil {
 		err = fmt.Errorf("get version: failed to decode body: %w", err)
 	}
@@ -135,13 +130,13 @@ func (d Download) download() (*bytes.Buffer, error) {
 	}
 
 	// verify file size
-	if d.FileSize != len(body) {
+	if d.FileSize >= 0 && d.FileSize != len(body) {
 		return nil, fmt.Errorf("download: invalid file size: expected %db, got %db", d.FileSize, len(body))
 	}
 
 	// verify hash
 	hash := fmt.Sprintf("%x", sha1.Sum(body))
-	if d.Hash != hash {
+	if d.Hash != "" && d.Hash != hash {
 		return nil, fmt.Errorf("download: invalid hash: expected %s, got %s", d.Hash, hash)
 	}
 
