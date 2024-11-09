@@ -14,6 +14,7 @@ const (
 	RESOURCE_URL = "https://resources.download.minecraft.net"
 )
 
+// GetManifest fetches the latest version manifest from Mojang.
 func GetManifest() (manifest *Manifest, err error) {
 	resp, err := http.Get(BASE_URL + "/mc/game/version_manifest_v2.json")
 	if err != nil {
@@ -37,6 +38,9 @@ func GetManifest() (manifest *Manifest, err error) {
 	return manifest, err
 }
 
+// GetVersion fetches the version v from Mojang using the latest version manifest.
+//
+// v can be any version id like "1.7.10" or "24w10a" or even "a1.0.4".
 func GetVersion(v string) (version *Version, err error) {
 	manifest, err := GetManifest()
 	if err != nil {
@@ -65,6 +69,7 @@ func GetVersion(v string) (version *Version, err error) {
 	return version, err
 }
 
+// GetClient fetches the client JAR for version v. See [GetVersion].
 func GetClient(v string) (client *bytes.Buffer, err error) {
 	version, err := GetVersion(v)
 	if err != nil {
@@ -74,6 +79,7 @@ func GetClient(v string) (client *bytes.Buffer, err error) {
 
 }
 
+// GetAssetFile fetches the asset file path for version v. See [GetVersion].
 func GetAssetFile(v, path string) (buf *bytes.Buffer, err error) {
 	version, err := GetVersion(v)
 	if err != nil {
@@ -82,6 +88,7 @@ func GetAssetFile(v, path string) (buf *bytes.Buffer, err error) {
 	return version.GetAssetFile(path)
 }
 
+// GetAllAssets fetches all assets for version v. See [GetVersion].
 func GetAllAssets(v string) (assetMap map[string]*bytes.Buffer, err error) {
 	version, err := GetVersion(v)
 	if err != nil {
@@ -90,12 +97,25 @@ func GetAllAssets(v string) (assetMap map[string]*bytes.Buffer, err error) {
 	return version.GetAllAssets()
 }
 
+// Download represents a file download.
 type Download struct {
-	Hash      string `json:"sha1"`
-	FileSize  int    `json:"size"`
-	URL       string `json:"url"`
-	ID        string `json:"id,omitempty"`
-	TotalSize int    `json:"totalSize,omitempty"`
+	// Hash is the SHA-1 hash of the file. It is used to verify the file contents.
+	// Setting it to an empty string will skip the hash check.
+	Hash string `json:"sha1"`
+
+	// FileSize is the size of the file in bytes.
+	// Setting it to a negative value will skip the size check.
+	FileSize int `json:"size"`
+
+	// URL is the download URL of the file.
+	URL string `json:"url"`
+
+	// ID is the filename. Mostly it is not set.
+	ID string `json:"id,omitempty"`
+
+	// TotalSize is used when the file is just a list of file downloads.
+	// It which case it is the total size of all files in the list.
+	TotalSize int `json:"totalSize,omitempty"`
 }
 
 func (d Download) download() (*bytes.Buffer, error) {

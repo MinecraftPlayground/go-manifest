@@ -5,12 +5,17 @@ import (
 	"fmt"
 )
 
+// Assets represents the assets of a version
 type Assets struct {
+	// Objects is a map from file path of the assets to its download
 	Objects map[string]AssetDownload `json:"objects"`
 }
 
+// AssetDownload is similar	to [Download], but has a different implementation of its download.
 type AssetDownload struct {
+	// Hash is the SHA1 hash of the asset file. It is used to construct the URL and verify the file content.
 	Hash string `json:"hash"`
+
 	Download
 }
 
