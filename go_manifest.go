@@ -42,6 +42,10 @@ func GetManifest() (manifest *Manifest, err error) {
 //
 // v can be any version id like "1.7.10" or "24w10a" or even "a1.0.4".
 func GetVersion(v string) (version *Version, err error) {
+	if cachedVersion, ok := versionCache.Get(v); ok {
+		return cachedVersion.(*Version), nil
+	}
+
 	manifest, err := GetManifest()
 	if err != nil {
 		return &Version{}, fmt.Errorf("get version: %w", err)
@@ -61,6 +65,8 @@ func GetVersion(v string) (version *Version, err error) {
 	if err != nil {
 		err = fmt.Errorf("get version: failed to decode body: %w", err)
 	}
+
+	versionCache.SetDefault(v, version)
 	return version, err
 }
 
