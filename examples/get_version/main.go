@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -18,5 +19,16 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Printf("Version data of %s:\n%+v\n", os.Args[1], *v)
+
+	data, err := json.MarshalIndent(v, "", "	")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	err = os.WriteFile(fmt.Sprintf("version_%s.json", os.Args[1]), data, 0644)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Printf("Saved version data of %s to version_%[1]s.json\n", os.Args[1])
 }
