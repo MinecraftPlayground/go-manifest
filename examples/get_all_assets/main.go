@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Kesuaheli/go-manifest"
+	"github.com/MinecraftPlayground/go-manifest"
 )
 
 func main() {

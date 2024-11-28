@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Kesuaheli/go-manifest"
+	"github.com/MinecraftPlayground/go-manifest"
 )
 
 func main() {
