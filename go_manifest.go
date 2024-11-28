@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 const (
@@ -119,6 +121,32 @@ func (d Download) download() (*bytes.Buffer, error) {
 		return nil, fmt.Errorf("download: %w", err)
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusTooManyRequests {
+		var timout time.Duration
+		if retryAfter := resp.Header.Get("retry-after"); retryAfter != "" {
+			retryAfterSeconds, _ := strconv.ParseInt(retryAfter, 10, 64)
+			timout = time.Duration(retryAfterSeconds) * time.Second
+		}
+		if ratelimitRemaining := resp.Header.Get("x-ratelimit-remaining"); ratelimitRemaining == "0" {
+			ratelimitReset, _ := strconv.ParseInt(resp.Header.Get("x-ratelimit-reset"), 10, 64)
+			ratelimitUnix := time.Unix(ratelimitReset, 0)
+			if ratelimitUnix.After(time.Now().Add(timout)) {
+				timout = time.Until(ratelimitUnix)
+			}
+		}
+		if timout == 0 {
+			timout = 1 * time.Minute
+		}
+
+		time.Sleep(timout)
+
+		resp, err := http.Get(d.URL)
+		if err != nil {
+			return nil, fmt.Errorf("download: %w", err)
+		}
+		defer resp.Body.Close()
+	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
