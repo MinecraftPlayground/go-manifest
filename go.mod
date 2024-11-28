@@ -1,3 +1,3 @@
-module github.com/Kesuaheli/go-manifest
+module github.com/MinecraftPlayground/go-manifest
 
 go 1.23.1
