@@ -8,5 +8,5 @@ This example downloads the client JAR file for a specified version.
 
 ### Example
 ```sh
-go run main.go 1.20.0
+go run main.go 1.21.4
 ```

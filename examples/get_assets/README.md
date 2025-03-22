@@ -8,5 +8,5 @@ This example downloads a specified asset file for a specified version. And saves
 
 ### Example
 ```sh
-go run main.go 1.20.0 minecraft/sounds/damage/fallbig.ogg
+go run main.go 1.21.4 minecraft/sounds/damage/fallbig.ogg
 ```

@@ -8,5 +8,5 @@ This example downloads all asset files for a specified version. And saves it as 
 
 ### Example
 ```sh
-go run main.go 1.20.0
+go run main.go 1.21.4
 ```
