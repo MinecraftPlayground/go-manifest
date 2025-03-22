@@ -1,2 +1,5 @@
 .vscode
-/assets/
+/assets
+/data
+examples/**/assets
+examples/**/data
