@@ -1,6 +1,6 @@
 # Download asset file
 
-This example downloads all asset files for a specified version. And saves it as file in `assets/<asset_id>`
+This example downloads all asset files (aka the vanilla resource pack) for a specified version. And saves it as file in `assets/<asset_id>`
 
 ### Usage
 
